@@ -140,6 +140,9 @@ const Header = styled(Box)`
   background-color: rgb(246, 248, 250);
   border-bottom: 1px solid #d0d7de;
   border-radius: 6px 6px 0px 0px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 `;
 
 const HeaderStrip = styled(Box)`
