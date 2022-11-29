@@ -2,12 +2,11 @@ import { FileBlockProps } from '@githubnext/blocks';
 import { ActionList, ActionMenu, Box, ButtonGroup, Text } from '@primer/react';
 import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
 import styled from 'styled-components';
+import './Block.css';
 import { Button } from './components/Button';
-import { ContextWrapper } from './components/ContextWrapper';
 import { decode } from './utils/base64';
 import { useGitHubData } from './utils/github';
 import { useLocalStorageState } from './utils/useLocalStorageState';
-import './Block.css';
 
 export function DiffBlock(props: FileBlockProps) {
   const { context, originalContent } = props;
@@ -40,77 +39,75 @@ export function DiffBlock(props: FileBlockProps) {
   }
 
   return (
-    <ContextWrapper>
-      <Container height="100%">
-        <Header>
-          <HeaderStrip>
-            <HeaderStripText>{path}</HeaderStripText>
-          </HeaderStrip>
+    <Container height="100%">
+      <Header>
+        <HeaderStrip>
+          <HeaderStripText>{path}</HeaderStripText>
+        </HeaderStrip>
 
-          <HeaderStrip>
-            <ButtonGroup sx={{ display: 'flex', alignItems: 'center' }}>
-              <Button size="small" selected={splitView} onClick={() => setSplitView(true)}>
-                Split
-              </Button>
-              <Button size="small" selected={!splitView} onClick={() => setSplitView(false)}>
-                Unified
-              </Button>
-            </ButtonGroup>
+        <HeaderStrip>
+          <ButtonGroup sx={{ display: 'flex', alignItems: 'center' }}>
+            <Button size="small" selected={splitView} onClick={() => setSplitView(true)}>
+              Split
+            </Button>
+            <Button size="small" selected={!splitView} onClick={() => setSplitView(false)}>
+              Unified
+            </Button>
+          </ButtonGroup>
 
-            <ActionMenu>
-              <ActionMenu.Button size="small">Compare settings</ActionMenu.Button>
+          <ActionMenu>
+            <ActionMenu.Button size="small">Compare settings</ActionMenu.Button>
 
-              <ActionMenu.Overlay>
-                <ActionList>
-                  <ActionList.Group title="Compare with..." selectionVariant="single">
-                    <ActionList.Item selected={target === 'previous'} onClick={() => setTarget('previous')}>
-                      Previous commit
+            <ActionMenu.Overlay>
+              <ActionList>
+                <ActionList.Group title="Compare with..." selectionVariant="single">
+                  <ActionList.Item selected={target === 'previous'} onClick={() => setTarget('previous')}>
+                    Previous commit
+                  </ActionList.Item>
+                  <ActionList.Item selected={target === 'main'} onClick={() => setTarget('main')}>
+                    Main branch
+                  </ActionList.Item>
+                </ActionList.Group>
+
+                <ActionList.Group title="Compare method" selectionVariant="single">
+                  {availableDiffMethods.map(({ label, value }) => (
+                    <ActionList.Item
+                      key={`diff-method-${value}`}
+                      selected={diffMethod === value}
+                      onClick={() => setDiffMethod(value)}
+                    >
+                      {label}
                     </ActionList.Item>
-                    <ActionList.Item selected={target === 'main'} onClick={() => setTarget('main')}>
-                      Main branch
-                    </ActionList.Item>
-                  </ActionList.Group>
+                  ))}
+                </ActionList.Group>
+              </ActionList>
+            </ActionMenu.Overlay>
+          </ActionMenu>
+        </HeaderStrip>
+      </Header>
 
-                  <ActionList.Group title="Compare method" selectionVariant="single">
-                    {availableDiffMethods.map(({ label, value }) => (
-                      <ActionList.Item
-                        key={`diff-method-${value}`}
-                        selected={diffMethod === value}
-                        onClick={() => setDiffMethod(value)}
-                      >
-                        {label}
-                      </ActionList.Item>
-                    ))}
-                  </ActionList.Group>
-                </ActionList>
-              </ActionMenu.Overlay>
-            </ActionMenu>
-          </HeaderStrip>
-        </Header>
-
-        {target === 'main' && commitInfo?.sha !== sha ? (
-          <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-            <Text>This is the latest commit, no differences to compare.</Text>
-          </Box>
-        ) : (
-          <ReactDiffViewer
-            oldValue={oldValue}
-            newValue={newValue}
-            splitView={splitView}
-            compareMethod={diffMethod}
-            codeFoldMessageRenderer={(totalFoldedLines: number) => (
-              <Text
-                sx={{
-                  fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace',
-                  fontSize: '12px',
-                  color: '#57606a'
-                }}
-              >{`Expand ${totalFoldedLines} lines...`}</Text>
-            )}
-          />
-        )}
-      </Container>
-    </ContextWrapper>
+      {target === 'main' && commitInfo?.sha !== sha ? (
+        <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+          <Text>This is the latest commit, no differences to compare.</Text>
+        </Box>
+      ) : (
+        <ReactDiffViewer
+          oldValue={oldValue}
+          newValue={newValue}
+          splitView={splitView}
+          compareMethod={diffMethod}
+          codeFoldMessageRenderer={(totalFoldedLines: number) => (
+            <Text
+              sx={{
+                fontFamily: 'ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace',
+                fontSize: '12px',
+                color: '#57606a'
+              }}
+            >{`Expand ${totalFoldedLines} lines...`}</Text>
+          )}
+        />
+      )}
+    </Container>
   );
 }
 

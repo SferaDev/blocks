@@ -1,11 +1,13 @@
 import { FileBlockProps } from '@githubnext/blocks';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { DiffBlock } from './Block';
-import { ContextWrapper } from './components/ContextWrapper';
+
+const queryClient = new QueryClient();
 
 export default function (props: FileBlockProps) {
   return (
-    <ContextWrapper>
+    <QueryClientProvider client={queryClient}>
       <DiffBlock {...props} />
-    </ContextWrapper>
+    </QueryClientProvider>
   );
 }
