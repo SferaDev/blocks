@@ -15,7 +15,7 @@ export function DiffBlock(props: FileBlockProps) {
 
   const [splitView, setSplitView] = useLocalStorageState('splitView', false);
   const [diffMethod, setDiffMethod] = useLocalStorageState<DiffMethod>('diffMethod', DiffMethod.WORDS);
-  const [target, setTarget] = useLocalStorageState<'main' | 'previous'>('target', 'main');
+  const [target, setTarget] = useLocalStorageState<'main' | 'previous'>('target', 'previous');
 
   const { data: commitInfo, isLoading: commitLoading } = useGitHubData(props, `/repos/${owner}/${repo}/commits/${sha}`);
   const parent = commitInfo?.parents[0]?.sha;
@@ -63,11 +63,11 @@ export function DiffBlock(props: FileBlockProps) {
               <ActionMenu.Overlay>
                 <ActionList>
                   <ActionList.Group title="Compare with..." selectionVariant="single">
-                    <ActionList.Item selected={target === 'main'} onClick={() => setTarget('main')}>
-                      Main branch
-                    </ActionList.Item>
                     <ActionList.Item selected={target === 'previous'} onClick={() => setTarget('previous')}>
                       Previous commit
+                    </ActionList.Item>
+                    <ActionList.Item selected={target === 'main'} onClick={() => setTarget('main')}>
+                      Main branch
                     </ActionList.Item>
                   </ActionList.Group>
 
