@@ -26,16 +26,16 @@ export function DiffBlock(props: FileBlockProps) {
     target === 'main' ? undefined : { ref: parent },
     { enabled: !!parent }
   );
-  const current = data?.content ? decode(data.content) : "";
+  const current = data?.content ? decode(data.content) : '';
 
   const oldValue = target === 'main' ? originalContent : current;
   const newValue = target === 'main' ? current : originalContent;
 
-  if ( commitLoading || (parent && dataLoading)) {
+  if (commitLoading || (parent && dataLoading)) {
     return (
-        <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-            <Text>Loading...</Text>
-        </Box>
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+        <Text>Loading...</Text>
+      </Box>
     );
   }
 
