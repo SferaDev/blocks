@@ -6,5 +6,13 @@
     "description": "A diff block",
     "entry": "blocks/diff-block/index.tsx",
     "matches": ["*"]
+  },
+  {
+    "type": "file",
+    "id": "ide-block",
+    "title": "IDE Block",
+    "description": "Block providing (readonly) editor tooling like tooltips and symbol navigation",
+    "entry": "blocks/ide-block/index.tsx",
+    "matches": ["*"]
   }
 ]
