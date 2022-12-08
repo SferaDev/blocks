@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import './Block.css';
 import { Button } from './components/Button';
 import { decode } from './utils/base64';
-import { useGitHubData } from './utils/github';
+import { useGitHubData } from './utils/useGitHubData';
 import { useLocalStorageState } from './utils/useLocalStorageState';
 
 export function DiffBlock(props: FileBlockProps) {
@@ -16,16 +16,21 @@ export function DiffBlock(props: FileBlockProps) {
   const [diffMethod, setDiffMethod] = useLocalStorageState<DiffMethod>('diffMethod', DiffMethod.WORDS);
   const [target, setTarget] = useLocalStorageState<'main' | 'previous'>('target', 'previous');
 
-  const { data: commitInfo, isLoading: commitLoading } = useGitHubData(props, `/repos/${owner}/${repo}/commits/${sha}`);
+  const { data: commitInfo, isLoading: commitLoading } = useGitHubData(
+    props,
+    `GET /repos/{owner}/{repo}/commits/{ref}`,
+    { owner, repo, ref: sha }
+  );
   const parent = commitInfo?.parents[0]?.sha;
 
   const { data, isLoading: dataLoading } = useGitHubData(
     props,
-    `/repos/${owner}/${repo}/contents/${path}`,
-    target === 'main' ? undefined : { ref: parent },
+    `GET /repos/{owner}/{repo}/contents/{path}`,
+    { owner, repo, path, ref: target === 'main' ? undefined : parent },
     { enabled: !!parent }
   );
-  const current = data?.content ? decode(data.content) : '';
+
+  const current = data && 'content' in data ? decode(data.content) : '';
 
   const oldValue = target === 'main' ? originalContent : current;
   const newValue = target === 'main' ? current : originalContent;
