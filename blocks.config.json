@@ -6,5 +6,13 @@
     "description": "A diff block",
     "entry": "blocks/diff-block/index.tsx",
     "matches": ["*"]
+  },
+  {
+    "type": "file",
+    "id": "test-block",
+    "title": "Test Block",
+    "description": "A test block",
+    "entry": "blocks/test-block/index.tsx",
+    "matches": ["*"]
   }
 ]
