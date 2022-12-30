@@ -1,12 +1,12 @@
-import './loadProcess';
+import '../utils/loadProcess';
 
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { Plugin, build, initialize } from 'esbuild-wasm';
 import { FsClient } from 'isomorphic-git';
 import packageJson from '../package.json';
-import { readFile } from './fs';
-import { Path } from './path';
-import { getDependency } from './cdn';
+import { readFile } from '../utils/fs';
+import { Path } from '../utils/path';
+import { getDependency } from '../utils/cdn';
 
 type UseBundlerOptions = {
   fs: FsClient;

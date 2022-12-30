@@ -3,8 +3,8 @@ import { Box } from '@primer/react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import styled from 'styled-components';
 import './Block.css';
-import { useFS, useFetchOrCloneRepo, useFile } from '../../utils/useGitRepo';
-import { useBundler } from '../../utils/useBundler';
+import { useFS, useFetchOrCloneRepo, useFile } from '../../hooks/useGitRepo';
+import { useBundler } from '../../hooks/useBundler';
 
 export function TestBlock(props: FileBlockProps) {
   const {

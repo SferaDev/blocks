@@ -1,11 +1,10 @@
-import './Block.css';
-
 import { FileBlockProps, FileContext, getLanguageFromFilename } from '@githubnext/blocks';
-import Editor, { useMonaco, Monaco } from '@monaco-editor/react';
-import { CancellationToken, editor, IMarkdownString, languages, Position, Uri, IRange } from 'monaco-editor';
-import { useEffect } from 'react';
 import { LsifReader, UriTransformer } from '@ionide/lsif-reader';
+import Editor, { Monaco, useMonaco } from '@monaco-editor/react';
+import { CancellationToken, IMarkdownString, IRange, Position, Uri, editor, languages } from 'monaco-editor';
+import { useEffect } from 'react';
 import * as lsp from 'vscode-languageserver-types';
+import './Block.css';
 
 let getDirName = (file: string) => {
   let parts = file.split('/');
