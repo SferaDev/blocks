@@ -6,6 +6,7 @@ import { FsClient } from 'isomorphic-git';
 import packageJson from '../package.json';
 import { readFile } from './fs';
 import { Path } from './path';
+import { getDependency } from './cdn';
 
 type UseBundlerOptions = {
   fs: FsClient;
@@ -39,19 +40,32 @@ const virtualFs = ({
           return { path };
         }
         case 'import-statement': {
-          const dirname = Path.dirname(args.importer);
-          const path = Path.join(dirname, args.path);
+          if (args.path.startsWith('.')) {
+            const dirname = Path.dirname(args.importer);
+            const path = Path.join(dirname, args.path);
 
-          return { path };
+            return { path };
+          } else {
+            return { path: args.path, namespace: 'cdn' };
+          }
+        }
+        default: {
+          throw new Error(`Unknown resolve kind: ${args.kind}`);
         }
       }
-
-      throw new Error(`Unknown resolve kind: ${args.kind}`);
     });
 
-    // TODO: Add CDN loading, fully test relative imports in fs
     build.onLoad({ filter: /.*/ }, async (args) => {
       console.log('onLoad', args);
+
+      if (args.namespace === 'cdn') {
+        console.log('loading from cdn', args.path);
+
+        const contents = await getDependency(args.path, { fetchImpl: fetch });
+        const loader = getLoader(args.path);
+
+        return { contents, loader };
+      }
 
       const extensions = Path.extname(args.path) ? [Path.extname(args.path)] : ['.ts', '.tsx', '.js', '.jsx'];
 

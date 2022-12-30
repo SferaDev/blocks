@@ -3,7 +3,8 @@ import { Box } from '@primer/react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import styled from 'styled-components';
 import './Block.css';
-import { useFetchOrCloneRepo, useFile } from '../../utils/useGitRepo';
+import { useFS, useFetchOrCloneRepo, useFile } from '../../utils/useGitRepo';
+import { useBundler } from '../../utils/useBundler';
 
 export function TestBlock(props: FileBlockProps) {
   const {
@@ -13,19 +14,20 @@ export function TestBlock(props: FileBlockProps) {
   const url = `https://github.com/${owner}/${repo}`;
   const dir = `/git/${owner}/${repo}`;
 
+  const fs = useFS();
   const { isLoading } = useFetchOrCloneRepo(url, dir, sha);
-  const { data } = useFile(`${dir}/${path}`, { enabled: !isLoading });
-
-  console.log('data', data, `${dir}/${path}`);
+  const { data: fileContents } = useFile(`${dir}/${path}`, { enabled: !isLoading });
+  const { data: bundlerOutput, error } = useBundler(
+    { fs, baseDir: dir, code: fileContents ?? '' },
+    { enabled: !!fileContents }
+  );
 
   return (
     <Container height="100%">
       <PanelGroup autoSaveId="example" direction="horizontal">
-        <Panel defaultSize={25}></Panel>
+        <Panel>{fileContents}</Panel>
         <PanelResizeHandle />
-        <Panel></Panel>
-        <PanelResizeHandle />
-        <Panel defaultSize={25}>{data}</Panel>
+        <Panel>{bundlerOutput ?? JSON.stringify(error, null, 4)}</Panel>
       </PanelGroup>
     </Container>
   );

@@ -33,6 +33,7 @@
     "rollup-plugin-virtual-fs": "^4.0.1-alpha.0",
     "styled-components": "^5.3.6",
     "typescript": "^4.9.4",
+    "url": "^0.11.0",
     "vscode-languageserver-types": "^3.17.2"
   }
 }
