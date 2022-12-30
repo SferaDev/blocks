@@ -1,4 +1,4 @@
 {
   "extends": "./node_modules/@githubnext/blocks/tsconfig.json",
-  "include": ["./blocks", "blocks/utils"]
+  "include": ["src", "src/utils"]
 }

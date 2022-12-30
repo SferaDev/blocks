@@ -3,10 +3,10 @@ import { ActionList, ActionMenu, Box, ButtonGroup, Text } from '@primer/react';
 import ReactDiffViewer, { DiffMethod } from 'react-diff-viewer';
 import styled from 'styled-components';
 import './Block.css';
-import { Button } from './components/Button';
-import { decode } from '../utils/base64';
-import { useGitHubData } from '../utils/useGitHubData';
-import { useLocalStorageState } from '../utils/useLocalStorageState';
+import { Button } from '../../components/Button';
+import { decode } from '../../utils/base64';
+import { useGitHubData } from '../../utils/useGitHubData';
+import { useLocalStorageState } from '../../utils/useLocalStorageState';
 
 export function DiffBlock(props: FileBlockProps) {
   const { context, originalContent } = props;

@@ -1,18 +1,26 @@
 import './loadBuffer';
 
-import { UseQueryOptions, UseQueryResult, useQuery } from '@tanstack/react-query';
+import {
+  UseMutationOptions,
+  UseMutationResult,
+  UseQueryOptions,
+  UseQueryResult,
+  useMutation,
+  useQuery
+} from '@tanstack/react-query';
 import { BFSRequire, configure } from 'browserfs';
-import git, { CallbackFsClient } from 'isomorphic-git';
+import git, { CallbackFsClient, FsClient } from 'isomorphic-git';
 import http from 'isomorphic-git/http/web';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Values } from './types';
+import { FS } from './fs';
 
 const GitContext = createContext<GitContextState | null>(null);
 
 type GitContextOptions = { corsProxy?: string };
 
 type GitContextState = {
-  fs: CallbackFsClient;
+  fs: FsClient;
   options?: GitContextOptions;
 };
 
@@ -30,7 +38,7 @@ type GitResult<Method extends GitMethod> = typeof git[Method] extends (args: any
     : Result
   : never;
 
-export const useGitRepo = <Method extends GitMethod>(
+export const useGitRepoQuery = <Method extends GitMethod>(
   method: Method,
   args: GitArgs<Method>,
   queryOptions?: UseQueryOptions<GitResult<Method>>
@@ -45,6 +53,30 @@ export const useGitRepo = <Method extends GitMethod>(
   return useQuery(
     ['git', method, args],
     async () => {
+      const result = await git[method]({ ...options, ...args, fs, http } as any);
+
+      return result ?? null;
+    },
+    {
+      enabled: !!fs,
+      ...(queryOptions as any)
+    }
+  );
+};
+
+export const useGitRepoMutation = <Method extends GitMethod>(
+  method: Method,
+  queryOptions?: UseMutationOptions<GitResult<Method>>
+): UseMutationResult<GitResult<Method>, any, GitArgs<Method>> => {
+  const context = useContext(GitContext);
+  if (!context) {
+    throw new Error('useGitRepo must be used within a GitRepoProvider');
+  }
+
+  const { fs, options } = context;
+
+  return useMutation(
+    async (args: GitArgs<Method>) => {
       const result = await git[method]({ ...options, ...args, fs, http } as any);
 
       return result ?? null;
@@ -77,5 +109,37 @@ export function useFS() {
     throw new Error('useFS must be used within a GitRepoProvider');
   }
 
-  return context.fs;
+  return context.fs as unknown as FS;
+}
+
+export function useFetchOrCloneRepo(url: string, dir: string, sha: string) {
+  const context = useContext(GitContext);
+  if (!context) {
+    throw new Error('useFetchOrCloneRepo must be used within a GitRepoProvider');
+  }
+
+  const { fs, options } = context;
+
+  return useQuery(['git', 'fetchOrClone'], async () => {
+    try {
+      await git.listRemotes({ fs, dir });
+    } catch (e) {
+      await git.clone({ ...options, fs, http, dir, url });
+    }
+
+    const { fetchHead } = await git.fetch({
+      ...options,
+      fs,
+      http,
+      dir,
+      ref: sha,
+      depth: 1,
+      singleBranch: true,
+      tags: false
+    });
+
+    await git.checkout({ ...options, fs, dir, ref: fetchHead ?? sha, force: true });
+
+    return await git.resolveRef({ fs, dir, ref: 'HEAD' });
+  });
 }
