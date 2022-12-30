@@ -1,7 +1,6 @@
-import './index.css';
+import './Block.css';
 
 import { FileBlockProps, FileContext, getLanguageFromFilename } from '@githubnext/blocks';
-import './index.css';
 import Editor, { useMonaco, Monaco } from '@monaco-editor/react';
 import { CancellationToken, editor, IMarkdownString, languages, Position, Uri, IRange } from 'monaco-editor';
 import { useEffect } from 'react';
