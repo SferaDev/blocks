@@ -1,8 +1,7 @@
 import { FileBlockProps } from '@githubnext/blocks';
 import { Box } from '@primer/react';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import styled from 'styled-components';
-import { useBundler } from '../../utils/useBundler';
-import { useFS, useFetchOrCloneRepo } from '../../utils/useGitRepo';
 import './Block.css';
 
 export function TestBlock(props: FileBlockProps) {
@@ -12,14 +11,17 @@ export function TestBlock(props: FileBlockProps) {
   const url = `https://github.com/${owner}/${repo}`;
   const dir = `/git/${owner}/${repo}`;
 
-  const fs = useFS();
-  const { isLoading: cloning } = useFetchOrCloneRepo(url, dir, sha);
-
-  const { data } = useBundler({ fs, baseDir: dir, code: originalContent }, { enabled: !cloning });
-
-  console.log({ cloning, data, originalContent });
-
-  return <Container height="100%"></Container>;
+  return (
+    <Container height="100%">
+      <PanelGroup autoSaveId="example" direction="horizontal">
+        <Panel defaultSize={25}></Panel>
+        <PanelResizeHandle />
+        <Panel></Panel>
+        <PanelResizeHandle />
+        <Panel defaultSize={25}>{originalContent}</Panel>
+      </PanelGroup>
+    </Container>
+  );
 }
 
 const Container = styled(Box)`

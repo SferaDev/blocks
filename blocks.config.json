@@ -4,7 +4,7 @@
     "id": "diff-block",
     "title": "Diff Block",
     "description": "A diff block",
-    "entry": "src/blocks/diff-block/index.tsx",
+    "entry": "blocks/diff-block/index.tsx",
     "matches": ["*"]
   },
   {
@@ -12,7 +12,7 @@
     "id": "test-block",
     "title": "Test Block",
     "description": "A test block",
-    "entry": "src/blocks/test-block/index.tsx",
+    "entry": "blocks/test-block/index.tsx",
     "matches": ["*"]
   }
 ]
