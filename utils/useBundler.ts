@@ -2,13 +2,13 @@ import './loadProcess';
 
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { Plugin, build, initialize } from 'esbuild-wasm';
+import { FsClient } from 'isomorphic-git';
+import packageJson from '../package.json';
+import { readFile } from './fs';
 import { Path } from './path';
-import { FS } from './fs';
-
-import packageJson from '../../package.json';
 
 type UseBundlerOptions = {
-  fs: FS;
+  fs: FsClient;
   code: string;
   baseDir?: string;
 };
@@ -18,7 +18,7 @@ const virtualFs = ({
   baseDir = '/',
   files = {}
 }: {
-  fs: FS;
+  fs: FsClient;
   baseDir?: string;
   files?: Record<string, string>;
 }): Plugin => ({
@@ -67,16 +67,6 @@ const virtualFs = ({
     });
   }
 });
-
-function readFile(fs: FS, path: string) {
-  return new Promise<string>((resolve, reject) => {
-    // @ts-ignore
-    fs.readFile(path, (err, data) => {
-      if (err) reject(err);
-      else resolve(data.toString());
-    });
-  });
-}
 
 const getLoader = (ext: string) =>
   ext === '.ts' ? 'ts' : ext === '.tsx' ? 'tsx' : ext === '.js' ? 'js' : ext === '.jsx' ? 'jsx' : 'default';

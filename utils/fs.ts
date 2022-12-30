@@ -1,7 +1,11 @@
-export type FS = {
-  readFileSync: (path: string, encoding: string) => string;
-  writeFileSync: (path: string, data: string, encoding: string) => void;
-  existsSync: (path: string) => boolean;
-  mkdirSync: (path: string) => void;
-  readdirSync: (path: string) => string[];
-};
+import { FsClient } from 'isomorphic-git';
+
+export function readFile(fs: FsClient, path: string) {
+  return new Promise<string>((resolve, reject) => {
+    // @ts-ignore
+    fs.readFile(path, (err, data) => {
+      if (err) reject(err);
+      else resolve(data.toString());
+    });
+  });
+}

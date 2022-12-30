@@ -13,7 +13,7 @@ import git, { CallbackFsClient, FsClient } from 'isomorphic-git';
 import http from 'isomorphic-git/http/web';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Values } from './types';
-import { FS } from './fs';
+import { readFile } from './fs';
 
 const GitContext = createContext<GitContextState | null>(null);
 
@@ -109,7 +109,28 @@ export function useFS() {
     throw new Error('useFS must be used within a GitRepoProvider');
   }
 
-  return context.fs as unknown as FS;
+  return context.fs;
+}
+
+export function useFile(path: string, queryOptions?: UseQueryOptions<string>) {
+  const context = useContext(GitContext);
+  if (!context) {
+    throw new Error('useFile must be used within a GitRepoProvider');
+  }
+
+  const { fs } = context;
+
+  return useQuery(
+    ['fs', 'readFile', path],
+    async () => {
+      try {
+        return await readFile(fs, path);
+      } catch (e) {
+        return null;
+      }
+    },
+    queryOptions as any
+  );
 }
 
 export function useFetchOrCloneRepo(url: string, dir: string, sha: string) {
