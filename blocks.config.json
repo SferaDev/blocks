@@ -14,5 +14,13 @@
     "description": "A test block",
     "entry": "blocks/test-block/index.tsx",
     "matches": ["*"]
+  },
+  {
+    "type": "file",
+    "id": "ide-block",
+    "title": "IDE Block",
+    "description": "A IDE block",
+    "entry": "blocks/ide-block/index.tsx",
+    "matches": ["*"]
   }
 ]
