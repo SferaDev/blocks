@@ -25,14 +25,11 @@ const virtualFs = ({
 }): Plugin => ({
   name: 'virtual-fs',
   setup: (build) => {
-    console.log('setup', { baseDir, files });
     const vfs = new Map(
       Object.entries(files).map(([path, contents]) => [normalizeName(Path.join(baseDir, path)), contents])
     );
 
     build.onResolve({ filter: /.*/ }, (args) => {
-      console.log('onResolve', args);
-
       switch (args.kind) {
         case 'entry-point': {
           const path = Path.join(baseDir, normalizeName(entryPoint));
@@ -56,11 +53,7 @@ const virtualFs = ({
     });
 
     build.onLoad({ filter: /.*/ }, async (args) => {
-      console.log('onLoad', args);
-
       if (args.namespace === 'cdn') {
-        console.log('loading from cdn', args.path);
-
         const contents = await getDependency(args.path, { fetchImpl: fetch });
         const loader = getLoader(args.path);
 

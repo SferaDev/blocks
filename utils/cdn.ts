@@ -1,4 +1,5 @@
 import { init, parse } from 'es-module-lexer';
+// @ts-ignore
 import url from 'url';
 
 export type AvailableCDNs = 'skypack';
